@@ -1,6 +1,23 @@
-FROM openjdk:11-windowsservercore-ltsc2022
+FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+ADD https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip C:/jdk.zip
+RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
+    Remove-Item C:/jdk.zip ; \
+    Write-Host 'Setting up environment...' ; \
+    $env:JAVA_HOME = 'C:\jdk-11.0.2' ; \
+    [Environment]::SetEnvironmentVariable('JAVA_HOME', $env:JAVA_HOME, [EnvironmentVariableTarget]::Machine) ; \
+    $env:Path += ';C:\jdk-11.0.2\bin' ; \
+    [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine) ; \
+    Write-Host 'Verifying Java installation...' ; \
+    java -version
+
+ADD https://github.com/git-for-windows/git/releases/download/v2.39.1.windows.1/MinGit-2.39.1-busybox-64-bit.zip C:/git.zip
+RUN Expand-Archive C:/git.zip -DestinationPath C:/git ; \
+    Remove-Item C:/git.zip ; \
+    [Environment]::SetEnvironmentVariable('Path', $env:Path + ';C:\git\cmd', [EnvironmentVariableTarget]::Machine) ; \
+    bash --version
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
