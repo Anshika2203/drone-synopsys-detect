@@ -1,19 +1,16 @@
-FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
+FROM mcr.microsoft.com/windows/servercore:ltsc2019
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-RUN Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip -OutFile 'jdk.zip'; \
-    Expand-Archive jdk.zip -DestinationPath C:\; \
-    Remove-Item -Path jdk.zip; \
-    setx /M JAVA_HOME "C:\jdk-11.0.2"; \
+ADD https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip C:/jdk.zip
+RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
+    Remove-Item C:/jdk.zip ; \
+    setx /M JAVA_HOME "C:\jdk-11.0.2" ; \
     setx /M PATH "$env:PATH;C:\jdk-11.0.2\bin"
-
-RUN New-Item -ItemType Directory -Force -Path C:\opt
 
 COPY scripts/download_detect.ps1 C:/opt/
 
-RUN Set-ExecutionPolicy Bypass -Scope Process -Force; \
-    C:\opt\synopsys_detect.ps1
+RUN C:/opt/download_detect.ps1
 
 COPY release/windows/amd64/blackduck-plugin.exe C:/bin/
 
