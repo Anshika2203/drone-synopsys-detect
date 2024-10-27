@@ -1,13 +1,20 @@
-FROM plugins/base:windows-ltsc2022-amd64
+FROM mcr.microsoft.com/windows/servercore/iis:windowsservercore-ltsc2019
 
-USER ContainerAdministrator
+SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-ENV GODEBUG=netdns=go
+RUN Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip -OutFile 'jdk.zip'; \
+    Expand-Archive jdk.zip -DestinationPath C:\; \
+    Remove-Item -Path jdk.zip; \
+    setx /M JAVA_HOME "C:\jdk-11.0.2"; \
+    setx /M PATH "$env:PATH;C:\jdk-11.0.2\bin"
 
-ADD scripts/download_detect.ps1 C:/download_detect.ps1
+RUN New-Item -ItemType Directory -Force -Path C:\opt
 
-RUN powershell -File C:/download_detect.ps1
+COPY scripts/synopsys_detect.ps1 C:/opt/
 
-ADD release/windows/amd64/blackduck-plugin.exe C:/blackduck-plugin.exe
+RUN Set-ExecutionPolicy Bypass -Scope Process -Force; \
+    C:\opt\synopsys_detect.ps1
 
-ENTRYPOINT ["C:\\blackduck-plugin.exe"]
+COPY release/windows/amd64/blackduck-plugin.exe C:/bin/
+
+ENTRYPOINT ["C:/bin/blackduck-plugin.exe"]
