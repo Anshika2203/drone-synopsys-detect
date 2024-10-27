@@ -10,7 +10,7 @@ RUN Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk11/9/GPL/openjdk
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
-COPY scripts/synopsys_detect.ps1 C:/opt/
+COPY scripts/download_detect.ps1 C:/opt/
 
 RUN Set-ExecutionPolicy Bypass -Scope Process -Force; \
     C:\opt\synopsys_detect.ps1
