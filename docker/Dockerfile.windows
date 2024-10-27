@@ -2,13 +2,19 @@ FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
 
-ADD https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip C:/jdk.zip
-RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
+RUN Write-Host 'Downloading Java...' ; \
+    Invoke-WebRequest -Uri https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip -OutFile C:/jdk.zip ; \
+    Write-Host 'Extracting Java...' ; \
+    Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
     Remove-Item C:/jdk.zip ; \
-    setx /M JAVA_HOME "C:\jdk-11.0.2" ; \
-    $currentPath = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
-    $javaPath = "C:\jdk-11.0.2\bin"; \
-    setx /M PATH "$currentPath;$javaPath"
+    Write-Host 'Setting up environment...' ; \
+    $env:JAVA_HOME = 'C:\jdk-11.0.2' ; \
+    [Environment]::SetEnvironmentVariable('JAVA_HOME', $env:JAVA_HOME, [EnvironmentVariableTarget]::Machine) ; \
+    $env:Path += ';C:\jdk-11.0.2\bin' ; \
+    [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine) ; \
+    Write-Host 'Verifying Java installation...' ; \
+    java -version
+
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
