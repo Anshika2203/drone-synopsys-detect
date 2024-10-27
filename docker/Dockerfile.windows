@@ -6,7 +6,11 @@ ADD https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin
 RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
     Remove-Item C:/jdk.zip ; \
     setx /M JAVA_HOME "C:\jdk-11.0.2" ; \
-    setx /M PATH "$env:PATH;C:\jdk-11.0.2\bin"
+    $currentPath = [Environment]::GetEnvironmentVariable('PATH', 'Machine'); \
+    $javaPath = "C:\jdk-11.0.2\bin"; \
+    setx /M PATH "$currentPath;$javaPath"
+
+RUN New-Item -ItemType Directory -Force -Path C:\opt
 
 COPY scripts/download_detect.ps1 C:/opt/
 
