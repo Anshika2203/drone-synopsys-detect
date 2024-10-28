@@ -15,9 +15,11 @@ RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
 
 ADD https://github.com/git-for-windows/git/releases/download/v2.39.1.windows.1/MinGit-2.39.1-busybox-64-bit.zip C:/git.zip
 RUN Expand-Archive C:/git.zip -DestinationPath C:/git ; \
-    Remove-Item C:/git.zip ; \
-    [Environment]::SetEnvironmentVariable('Path', $env:Path + ';C:\git\cmd', [EnvironmentVariableTarget]::Machine) ; \
-    bash --version
+    Remove-Item C:/git.zip
+
+RUN setx PATH "$($Env:Path + ';C:\git\cmd')"
+
+RUN C:/git/cmd/bash.exe --version
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
