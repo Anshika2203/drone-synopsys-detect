@@ -1,6 +1,12 @@
+# escape=`
+
 FROM mcr.microsoft.com/windows/servercore:ltsc2022
 
 SHELL ["powershell", "-Command", "$ErrorActionPreference = 'Stop'; $ProgressPreference = 'SilentlyContinue';"]
+
+USER ContainerAdministrator
+
+RUN setx /M PATH "%PATH%;C:\Program Files\PowerShell"
 
 ADD https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_windows-x64_bin.zip C:/jdk.zip
 RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
@@ -11,15 +17,6 @@ RUN Expand-Archive C:/jdk.zip -DestinationPath C:/ ; \
     $env:Path += ';C:\jdk-11.0.2\bin' ; \
     [Environment]::SetEnvironmentVariable('Path', $env:Path, [EnvironmentVariableTarget]::Machine) ; \
     Write-Host 'Verifying Java installation...' ; \
-    java -version
-
-ADD https://github.com/git-for-windows/git/releases/download/v2.39.1.windows.1/MinGit-2.39.1-busybox-64-bit.zip C:/git.zip
-RUN Expand-Archive C:/git.zip -DestinationPath C:/git ; \
-    Remove-Item C:/git.zip
-
-RUN setx PATH "$($Env:Path + ';C:\git\usr\bin')"
-
-RUN C:/git/usr/bin/bash.exe --version
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
