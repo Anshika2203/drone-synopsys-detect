@@ -23,7 +23,7 @@ RUN New-Item -ItemType Directory -Force -Path C:\opt\jar
 
 ARG DETECT_SOURCE="https://sig-repo.synopsys.com/artifactory/bds-integrations-release/com/synopsys/integration/synopsys-detect/9.7.0/synopsys-detect-9.7.0.jar"
 
-RUN Invoke-WebRequest ${DETECT_SOURCE} -OutFile C:\opt\jar\synopsys-detect-9.7.0.jar
+RUN Invoke-WebRequest -Uri %DETECT_SOURCE% -OutFile C:\opt\jar\synopsys-detect-9.7.0.jar
 
 # Copy the Black Duck plugin executable
 COPY release/windows/amd64/blackduck-plugin.exe C:/bin/
