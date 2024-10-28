@@ -2,11 +2,11 @@ FROM alpine:latest
 
 RUN apk add --no-cache bash curl openjdk11-jre
 
-COPY scripts/download_detect.sh /opt/
+ARG DETECT_SOURCE=https://sig-repo.synopsys.com/artifactory/bds-integrations-release/com/synopsys/integration/synopsys-detect/9.7.0/synopsys-detect-9.7.0.jar
 
-RUN chmod +x /opt/download_detect.sh
+RUN mkdir -p /opt/jar
 
-RUN /opt/download_detect.sh
+RUN curl -L -o /opt/jar/synopsys-detect-9.7.0.jar --progress-bar "${DETECT_SOURCE}"
 
 COPY release/linux/amd64/blackduck-plugin /bin/
 
