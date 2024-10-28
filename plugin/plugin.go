@@ -49,7 +49,7 @@ func runBlackDuckScan(p *Plugin) error {
 	if runtime.GOOS == "linux" {
 		command = fmt.Sprintf("java -jar /opt/jar/synopsys-detect-9.7.0.jar --blackduck.url=\"%s\" --blackduck.api.token=\"%s\" --detect.project.name=\"%s\"", bdURL, bdToken, bdProject)
 	} else if runtime.GOOS == "windows" {
-		command = fmt.Sprintf("java -jar \"C:\\opt\\jar\\synopsys-detect-9.7.0.jar\" --blackduck.url=\"%s\" --blackduck.api.token=\"%s\" --detect.project.name=\"%s\"", bdURL, bdToken, bdProject)
+		command = fmt.Sprintf("powershell.exe -Command \"java -jar 'C:\\opt\\jar\\synopsys-detect-9.7.0.jar' --blackduck.url='%s' --blackduck.api.token='%s' --detect.project.name='%s'\"", bdURL, bdToken, bdProject)
 	}
 
 	if p.BlackduckOfflineMode {
