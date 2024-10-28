@@ -17,9 +17,9 @@ ADD https://github.com/git-for-windows/git/releases/download/v2.39.1.windows.1/M
 RUN Expand-Archive C:/git.zip -DestinationPath C:/git ; \
     Remove-Item C:/git.zip
 
-RUN setx PATH "$($Env:Path + ';C:\git\cmd')"
+RUN setx PATH "$($Env:Path + ';C:\git\usr\bin')"
 
-RUN C:/git/cmd/bash.exe --version
+RUN C:/git/usr/bin/bash.exe --version
 
 RUN New-Item -ItemType Directory -Force -Path C:\opt
 
