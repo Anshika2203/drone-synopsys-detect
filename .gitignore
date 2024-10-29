@@ -2,3 +2,5 @@
 release/
 blackduck-plugin
 opt/
+jar/
+tmp/
